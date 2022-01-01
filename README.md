@@ -1,4 +1,4 @@
-# Heaven's Gate Hook
+# Hooking Heaven's Gate in a weekend
 
 ## What And Why?
 
