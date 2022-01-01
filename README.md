@@ -36,29 +36,29 @@ Let's open it up in windbg and set a breakpoint on sleep:
 
 Nice. Now let's wait for a breakpoint and inspect the disassembly:
 
-![image-20211231212027826](README.assets\image-20211231212027826.png)
+![image-20211231212027826](./README.assets/image-20211231212027826.png)
 
 Cool. seems like it's calling `SleepEx(dwMiliseconds, 0)`, which makes sense. lets step in:
 
-![image-20211231212214908](README.assets\image-20211231212214908.png)
+![image-20211231212214908](./README.assets/image-20211231212214908.png)
 
 There's our syscall. Let's step in once more and check it out:
 
-![image-20211231212257900](README.assets\image-20211231212257900.png)
+![image-20211231212257900](./README.assets/image-20211231212257900.png)
 
 Getting warmer... Looks like we're placing some constant (perhaps a syscall number) into eax and a ptr to an ntdll Wow64 syscall transition function to edx and calling it.
 
-![image-20211231212631242](README.assets\image-20211231212631242.png)
+![image-20211231212631242](./README.assets/image-20211231212631242.png)
 
 Looks like all this routine does is jump some ptr global in ntdll. it likely contains the ptr to the Wow64 translation routine.
 
-![image-20211231212749224](README.assets\image-20211231212749224.png)
+![image-20211231212749224](./README.assets/image-20211231212749224.png)
 
 A far jump! interesting...
 
 So we're changing CS from usermode! This new selector effects whether we're executing in 32 bit mode or 64 bit mode:
 
-![image-20211231214100112](README.assets\image-20211231214100112.png)
+![image-20211231214100112](./README.assets/image-20211231214100112.png)
 
 As stated in the intel manuals: `In IA-32e mode, bit 21 of the second doubleword of the segment descriptor indicates whether a code segment contains native 64-bit code. A value of 1 indicates instructions in this code segment are executed in 64-bit mode.`
 
